@@ -1,0 +1,21 @@
+<div class="recommand">
+  <div class="row title">
+    <hr>
+    <h2>Your album</h2>
+  </div>
+  <br>
+  <div class="custom-select" style="padding-left: 10px;">
+     <% @album_list.each do |album| %>
+       <div class="row">
+       <hr>
+         <div class="col-md-4">
+           <h4><%= link_to album.name, album %> : </h4>
+         </div>
+         <div class="col-md-8">
+           <p><%= album.caption %></p>
+         </div>
+       </div>
+    <% end %>
+  </div>
+
+</div>

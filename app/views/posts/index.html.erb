@@ -1,0 +1,7 @@
+<%= link_to t(".new_post"), new_post_path %>
+<br>
+<p id="notice"><%= notice %></p>
+<h1><%= t ".post" %></h1>
+<% @post.each do |post| %>
+  <%= render "post", post: post %>
+<% end %>

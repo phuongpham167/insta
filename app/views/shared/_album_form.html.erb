@@ -1,0 +1,15 @@
+<h2 style="padding-bottom: 10px; text-align: center; font-family: Arial;">Create new album</h2>
+<br>
+<%= form_for(Album.new) do |f| %>
+  <div class="field">
+    <%= f.label :name%><br>
+    <%= f.text_field :name, class: "form-control input" %>
+  </div>
+  <div class="field">
+    <%= f.label :caption%><br>
+    <%= f.text_area :caption, class: "form-control input" %>
+  </div>
+  <br>
+  <%= f.submit "Create", class: "btn btn-primary btn-block" %>
+  <br>
+<% end %>

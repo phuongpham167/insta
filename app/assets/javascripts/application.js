@@ -1,0 +1,10 @@
+//= require jquery
+//= require jquery_ujs
+//= require jquery-ui
+//= require private_pub
+//= require rails-ujs
+//= require bootstrap
+//= require turbolinks
+//= require jquery.flexslider
+//= require_tree .
+//= require_self

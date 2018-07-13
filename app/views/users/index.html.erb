@@ -1,0 +1,37 @@
+<div class="row">
+  <% if @users.any? %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+        <% if !current_user?(user) %>
+          <tr>
+            <td><%= link_to gravatar_for(current_user), current_user %></td>
+            <td style="padding-top: 30px;"><%= link_to user.name, user %></td>
+            <td style="padding-top: 30px;">
+              <% if !current_user.following?(user) %>
+                <%= form_for(current_user.active_relationships.build, remote: true) do |f| %>
+                  <div><%= hidden_field_tag :followed_id, user.id %></div>
+                  <%= f.submit "Follow", class: "btn btn-primary" %>
+                <% end %>
+              <% else %>
+                <%= form_for(current_user.active_relationships.find_by(followed_id: user.id), html: { method: :delete }, remote: true) do |f| %>
+                  <%= f.submit "Unfollow", class: "btn" %>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+   <h2>No user</h2>
+  <% end%>
+  </div>

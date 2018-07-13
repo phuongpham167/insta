@@ -1,0 +1,45 @@
+<div class="row userinfo">
+   <div class="col-md-2">
+     <div style="border-radius: 50px">
+       <%= link_to gravatar_for(@user), @user %>
+     </div>
+   </div>
+   <div class="col-md-10" style="padding-top: 30px">
+     <h3><%= link_to @user.name, @user %></h3>
+   </div>
+</div>
+<div class="row" style="padding-top: 20px; padding-left: 20px;">
+  <section class="stats">
+    <%= render "shared/statsfl" %>
+  </section>
+</div>
+<% if current_user?(@user) %>
+<div class="row" style="padding-left: 20px; padding-top: 10px;">
+  <a href="<%= user_like_user_path(@user) %>">
+    <strong id="followers" class="stat">
+      Posts you like
+    </strong>
+  </a>
+</div>
+<div class="row" style="padding-left: 20px; padding-top: 10px;">
+  <a href="<%= user_bookmark_user_path(@user) %>">
+    <strong id="followers" class="stat">
+      Posts you mark
+    </strong>
+  </a>
+</div>
+<% end %>
+<div>
+  <%= render "follow_form" if logged_in? %>
+  <div class="col-md-8" style="padding-top: 30px;">
+    <% if @user.posts.any? %>
+      <div class="row" style="padding-bottom: 20px">
+        <h3>Images you shared</h3>
+      </div>
+      <ol>
+        <%= render @posts %>
+      </ol>
+      <%= will_paginate @posts %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,208 @@
+<% if @post != nil %>
+<% @post.each do |post| %>
+  <div class="post">
+  <div class="row userinfo">
+     <div class="col-md-2">
+       <%= link_to gravatar_for(post.user), post.user %>
+     </div>
+     <div class="col-md-10" style="padding-top: 30px">
+       <h3><%= link_to post.user.name, post.user %></h3>
+     </div>
+  </div>
+  <div class="row content">
+    <div class="row caption">
+      <span class="content">
+        <%= post.caption %>
+      </span>
+    </div>
+    <div class="row tag">
+      <span class="content">
+        <%= post.tag %>
+      </span>
+    </div>
+    <div class="row timepost">
+      <span><a href="http://localhost:3000/posts/<%= post.id %>"><%= post.created_at %></a></span>
+    </div>
+    <div class="row">
+      <span>Album: <%= link_to post.album.name, post.album %></span>
+    </div>
+    <div class="img">
+      <% @post_attachments = post.post_attachments %>
+      <div class="flexslider" style="max-width: 700px; max-height: 700px ">
+        <ul class="slides">
+          <% @post_attachments.each do |post_attachment| %>
+            <li >
+              <%= image_tag post_attachment.avatar_url %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+    <% if current_user?(post.user) %>
+    <div class="row action">
+      <div class="edit">
+        <%= link_to "Delete", post, method: :delete, data: { confirm: t(".confirm") } %>
+        <a class="btn" data-toggle="modal" data-target = "#modal-window-one" class="btn click-to-open" data-modal="modal-window-one">Edit</a>
+        <div class="modal fade" id="modal-window-one" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Post</h4>
+              </div>
+              <div class="modal-body">
+                <%= form_for(post, html: { multipart: true }) do |f| %>
+                  <div class="field">
+                    <%= f.label :caption %><br>
+                    <%= f.text_field :caption, class: "form-control input-sm" %>
+                  </div>
+                  <div class="field">
+                    <%= f.label :tag %><br>
+                    <%= f.text_field :tag, class: "form-control input-sm" %>
+                  </div>
+                  <div class="actions" style="padding-top: 10px;">
+                     <%= f.submit "Update", class: "btn btn-primary" %>
+                  </div>
+                <% end %>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% end %>
+  </div>
+  <div class="row likesave">
+     <div class="col-md-6 like">
+       <% if current_user.like?(post) %>
+        <%= form_for(current_user.active_likes.find_by(post_id: post.id),
+          html: { method: :delete }) do |f| %>
+          <%= f.submit "Unlike", class: "btn" %>
+        <% end %>
+        <% else %>
+          <%= form_for(current_user.active_likes.build) do |f| %>
+            <div><%= hidden_field_tag :post_id, post.id %></div>
+            <%= f.submit "Like", class: "btn btn-primary" %>
+          <% end %>
+        <% end %>
+     </div>
+     <div class="col-md-6 save">
+       <% if current_user.bookmark?(post) %>
+          <%= form_for(current_user.active_bookmarks.find_by(post_id: post.id),
+            html: { method: :delete }) do |f| %>
+            <%= f.submit "Un Save", class: "btn" %>
+          <% end %>
+        <% else %>
+          <%= form_for(current_user.active_bookmarks.build) do |f| %>
+            <div><%= hidden_field_tag :post_id, post.id %></div>
+            <%= f.submit "Save", class: "btn btn-primary" %>
+          <% end %>
+        <% end %>
+     </div>
+  </div>
+  <div class="row peoplelike">
+    <div class="stats">
+      <div>
+        <a class="btn" data-toggle="modal" data-target = <%= "#modal-window-two-"+post.id.to_s %> class="btn click-to-open" data-modal="modal-window-one"><%= post.post_like.count %> likes</a>
+          <div class="modal fade" id=<%= "modal-window-two-"+post.id.to_s %> role="dialog" >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title"><%= post.post_like.count %> users like this post</h4>
+                </div>
+                <div class="modal-body">
+                  <div>
+                      <div class="row">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Relationship</th>
+                          </tr>
+                        </thead>
+                        <tbody style="padding-left: 50px;">
+
+                          <% post.post_like.each do |user| %>
+                            <% if current_user?(user) %>
+                              <tr>
+                                <td style="text-align: right;"><%= link_to user.name, user %></td>
+                                <td></td>
+                              </tr>
+                            <% elsif !current_user.following?(user) %>
+                              <tr>
+                                <td style="text-align: center;"><%= link_to user.name, user %></td>
+                                <td>
+                                  <%= form_for(current_user.active_relationships.build, remote: true) do |f| %>
+                                    <div><%= hidden_field_tag :followed_id, user.id %></div>
+                                    <%= f.submit "Follow", class: "btn btn-primary" %>
+                                  <% end %>
+                                </td>
+                              </tr>
+                            <% else %>
+                              <tr>
+                                <td style="text-align: center;"><%= link_to user.name, user %></td>
+                                <td>
+                                  <%= form_for(current_user.active_relationships.find_by(followed_id: user.id), html: { method: :delete }, remote: true) do |f| %>
+                                    <%= f.submit "Unfollow", class: "btn" %>
+                                  <% end %>
+                                </td>
+                              </tr>
+                            <% end %>
+                          <% end %>
+                        </tbody>
+                      </table>
+                    </div>
+
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+  <div class="row comments">
+    <div class="row title">
+      <h4>Comments:</h4>
+    </div>
+    <div class="row contentcomment">
+      <% @post_comments = post.post_comments %>
+      <span  id="entry-comment<%= post.id %>">
+        <%= render @post_comments %>
+      </span>
+    </div>
+    <div class="row newcmt">
+      <span id="form-status">
+        <%= form_for PostComment.new do |f| %>
+            <div class="col-lg-2">
+              <%= link_to gravatar_for(current_user), current_user %>
+            </div>
+            <div class="field col-lg-8" style="padding-left: 0px">
+              <%= f.hidden_field :post_id, value: post.id %>
+              <%= f.hidden_field :user_id, value: current_user.id %>
+              <%= f.text_area :content, placeholder: "Comment here", class: "form-control" %>
+            </div>
+          <%= f.submit "Comment", class: "btn btn-primary"  %>
+        <% end %>
+      </span>
+    </div>
+  </div>
+</div>
+<% end %>
+<% else %>
+  You not mark any post
+<% end %>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.flexslider').flexslider();
+  });
+</script>

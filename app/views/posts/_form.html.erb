@@ -1,0 +1,26 @@
+<div class="login">
+  <div class="col-md-6">
+    <%= form_for(@post, html: { multipart: true }) do |f| %>
+      <div class="field">
+        <%= f.label :caption %><br>
+        <%= f.text_field :caption, class: "form-control input-sm" %>
+      </div>
+      <div class="field">
+        <%= f.label :tag %><br>
+        <%= f.text_field :tag, class: "form-control input-sm" %>
+      </div>
+      <div>
+        <%= select "post", "album_id", current_user.albums.collect { |a| [a.name, a.id] } %>
+      </div>
+      <%= f.fields_for :post_attachments do |p| %>
+        <div class="field">
+          <%= p.label :images %><br>
+          <%= p.file_field :avatar, multiple: true, name: "post_attachments[avatar][]"%>
+        </div>
+      <% end %>
+      <div class="actions">
+         <%= f.submit "Post", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

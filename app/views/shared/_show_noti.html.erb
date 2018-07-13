@@ -1,0 +1,39 @@
+<% @noti = current_user.listnoti %>
+<ul class="notificator">
+  <a href="#" id="open_notification">
+    <p class="absolute"> <%= @noti.count %></p>
+    <span><i class="fa fa-bell-o" aria-hidden = "true"></i></span>
+  </a>
+  <div id="notificationContainer" style="background-color: #4A245E">
+    <div id="notificationTitle">Notifications</div>
+    <div id="notificationsBody" class="notifications">
+      <ul id="notificationList" style="border: none">
+       <% @noti.each do |noti| %>
+         <% if noti.type_id == 1 %>
+           <li>
+             <a href="http://localhost:3000/posts/<%= noti.object_id %>">
+               <%= noti.event %>
+             </a>
+           </li>
+         <% elsif noti.type_id == 2 %>
+           <li>
+             <a href="http://localhost:3000/posts/<%= noti.object_id %>">
+               <%= noti.event %>
+             </a>
+           </li>
+         <% elsif noti.type_id == 3 %>
+           <li>
+             <a href="<%= followers_user_path(current_user) %>">
+               <% user = User.find(noti.object_id) %>
+               <%= user.name %><%= noti.event %>
+             </a>
+           </li>
+         <% else %>
+           <li><%= noti.event %></li>
+         <% end %>
+        <% end %>
+      </ul>
+    </div>
+    <div id="notificationFooter"></div>
+  </div>
+</ul>

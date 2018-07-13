@@ -1,0 +1,30 @@
+<h2 style="padding-bottom: 10px; text-align: center; font-family: Arial;">Share new Images</h2>
+<div class="row">
+  <div class="col-md-12">
+    <%= form_for(@post, html: { multipart: true }) do |f| %>
+    <div class="field">
+      <%= f.label :caption%><br>
+      <%= f.text_area :caption, class: "form-control input" %>
+    </div>
+    <div class="field">
+      <%= f.label :tag %><br>
+      <%= f.text_field :tag, class: "form-control input" %>
+    </div>
+    <div class="select-box">
+      <%= f.label :Album %><br>
+      <%= select "post", "album_id", current_user.albums.collect { |a| [a.name, a.id] } %>
+    </div>
+    <%= f.fields_for :post_attachments do |p| %>
+      <div class="field">
+        <%= f.label :Images %><br>
+        <%= p.file_field :avatar, multiple: true, name: "post_attachments[avatar][]", class: "upload-file"  %>
+      </div>
+    <% end %>
+    <br>
+    <div class="actions">
+       <%= f.submit "Post", class: "btn btn-info btn-block " %>
+    </div>
+<% end %>
+  </div>
+</div>
+

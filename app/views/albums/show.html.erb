@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+<p>
+  <strong><%= t ".user" %></strong>
+  <%= @album.user.name %>
+</p>
+<strong>Album: <%= @album.name %></strong>
+<ul class="slides">
+  <% @post_on_album.each do |p| %>
+    <li >
+       <div>
+         <span class="content">
+          <% @post_attachments = p.post_attachments %>
+          <div class="flexslider" style="max-width: 700px; max-height: 700px ">
+            <ul class="slides">
+              <% @post_attachments.each do |p| %>
+                <li >
+                  <%= image_tag p.avatar_url %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+         </span>
+       </div>
+    </li>
+  <% end %>
+</ul>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.flexslider').flexslider();
+  });
+</script>

@@ -1,0 +1,41 @@
+<div class="recommand">
+  <div class="row title">
+    <hr>
+    <h1><%= "People may you know" %></h1>
+  </div>
+  <div class="search-box-ahihi" style="padding-top: 20px">
+      <div class="b-search-ahihi">
+        <%= form_tag users_path, method: :get, class: "search-input ", id: "form_search" do %>
+         <%= text_field_tag "find_user", params[:find_user], placeholder: "Find user by username",
+            id: "autocomplete", class: "form-control" %>
+        <% end %>
+      </div>
+    </div>
+  <div class="row">
+    <table class="table">
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+        <% if !current_user.following?(user) && !current_user?(user) %>
+          <tr>
+            <td><%= link_to gravatar_for(current_user), current_user %></td>
+            <td style="padding-top: 30px;"><%= link_to user.name, user %></td>
+            <td style="padding-top: 30px;">
+              <%= form_for(current_user.active_relationships.build, remote: true) do |f| %>
+                  <div><%= hidden_field_tag :followed_id, user.id %></div>
+                  <%= f.submit "Follow", class: "btn btn-primary" %>
+                <% end %>
+            </td>
+          </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
